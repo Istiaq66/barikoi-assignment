@@ -61,7 +61,7 @@ class Place {
 
   Place.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    distanceWithinMeters = json['distance_within_meters'];
+    distanceWithinMeters = double.tryParse(json['distance_within_meters'].toString());
     address = json['address'];
     area = json['area'];
     city = json['city'];

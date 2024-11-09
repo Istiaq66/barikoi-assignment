@@ -25,6 +25,7 @@ class _MapScreenState extends State<MapScreen>{
   Symbol? _tappedSymbol;  // To keep track of the current symbol
   LatLng? initialLatLng;
   LatLng? tappedLatLng;
+  Line? routeLine; // Declare a variable to hold the polyline reference
 
   @override
   void initState() {
@@ -68,6 +69,9 @@ class _MapScreenState extends State<MapScreen>{
                   },
                   onMapClick: (point, latLng) async {
                     tappedLatLng = latLng;
+                    if(routeLine != null){
+                      mController?.removeLine(routeLine!);
+                    }
                     _onMapClick(point, latLng);
                   },
                 ),
@@ -93,7 +97,7 @@ class _MapScreenState extends State<MapScreen>{
                               onPressed: () async {
                                 await mapController.getRoute(myLatLng: initialLatLng,latLng: tappedLatLng);
                                 // Add the polyline to the map
-                                mController?.addLine(
+                                routeLine = await mController?.addLine(
                                   LineOptions(
                                     geometry: mapController.polylineCoordinates,
                                     lineColor: "#ff0000",
