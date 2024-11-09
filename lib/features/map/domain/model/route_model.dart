@@ -37,7 +37,7 @@ class RouteModel {
 class Routes {
   String? geometry;
   List<Legs>? legs;
-  int? distance;
+  double? distance;
   double? duration;
   String? weightName;
   double? weight;
@@ -58,7 +58,7 @@ class Routes {
         legs!.add(Legs.fromJson(v));
       });
     }
-    distance = json['distance'];
+    distance = double.tryParse(json['distance'].toString());
     duration = json['duration'];
     weightName = json['weight_name'];
     weight = json['weight'];
@@ -79,7 +79,7 @@ class Routes {
 }
 
 class Legs {
-  int? distance;
+  double? distance;
   double? duration;
   String? summary;
   double? weight;
@@ -87,8 +87,8 @@ class Legs {
   Legs({this.distance, this.duration, this.summary, this.weight});
 
   Legs.fromJson(Map<String, dynamic> json) {
-    distance = json['distance'];
-    duration = json['duration'];
+    distance = double.tryParse(json['distance'].toString());
+    duration = double.tryParse(json['duration'].toString());
     summary = json['summary'];
     weight = json['weight'];
   }
