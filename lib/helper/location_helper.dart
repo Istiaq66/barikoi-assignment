@@ -12,7 +12,6 @@ class LocationHelper{
   StreamSubscription<Position>? get positionSubscription => _positionSubscription;
   final StreamController<Position> _positionStreamController = StreamController<Position>.broadcast();
 
-  // Getter for the stream.
   Stream<Position> get positionStream => _positionStreamController.stream;
 
   LocationHelper._internal();

@@ -49,10 +49,8 @@ class MapController extends GetxController{
   }
 
   void drawRouteOnMap(String? encodedPolyline) {
-    // Decode the polyline string
     List<PointLatLng> points = PolylinePoints().decodePolyline(encodedPolyline!);
 
-    // Convert the list to Maplibre's LatLng format
     _polylineCoordinates = points.map((point) {
       return LatLng(point.latitude, point.longitude);
     }).toList();

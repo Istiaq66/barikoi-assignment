@@ -19,13 +19,13 @@ class MapScreen extends StatefulWidget{
 
 class _MapScreenState extends State<MapScreen>{
   final LocationHelper _locationService = LocationHelper();
-  CameraPosition? initialPosition;   //CameraPosition object for initial location in map
+  CameraPosition? initialPosition;
   MaplibreMapController? mController;
-  Symbol? _currentSymbol;  // To keep track of the current symbol
-  Symbol? _tappedSymbol;  // To keep track of the current symbol
+  Symbol? _currentSymbol;
+  Symbol? _tappedSymbol;
   LatLng? initialLatLng;
   LatLng? tappedLatLng;
-  Line? routeLine; // Declare a variable to hold the polyline reference
+  Line? routeLine;
 
   @override
   void initState() {
@@ -55,16 +55,13 @@ class _MapScreenState extends State<MapScreen>{
             return Stack(
               children: [
                 MaplibreMap(
-                  styleString: AppConstants.mapUrl , // barikoi map style url
-                  initialCameraPosition: initialPosition!,   // set map initial location where map will show first
-                  onMapCreated: (MaplibreMapController mapController){  //called when map object is created
-                    mController = mapController; // use the MaplibreMapController for map operations
-
-                    mController?.onSymbolTapped.add(_onSymbolTapped);   // add symbol tap event listener to mapcontroller
-
+                  styleString: AppConstants.mapUrl ,
+                  initialCameraPosition: initialPosition!,
+                  onMapCreated: (MaplibreMapController mapController){
+                    mController = mapController;
+                    mController?.onSymbolTapped.add(_onSymbolTapped);
                   },
                   onStyleLoadedCallback: () async {
-
                     _showCurrentLocation();
                   },
                   onMapClick: (point, latLng) async {
@@ -76,8 +73,7 @@ class _MapScreenState extends State<MapScreen>{
                   },
                 ),
                 if (mapController.reverseGeoModel != null)
-                  Positioned(
-                    top: 10, left: 10, right: 10,
+                  Positioned(top: 10, left: 10, right: 10,
                     child: Container(
                       padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
@@ -91,8 +87,7 @@ class _MapScreenState extends State<MapScreen>{
                         ),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      child: Row(
-                        children: [
+                      child: Row(children: [
                           IconButton(
                               onPressed: () async {
                                 await mapController.getRoute(myLatLng: initialLatLng,latLng: tappedLatLng);
@@ -147,17 +142,16 @@ class _MapScreenState extends State<MapScreen>{
       await mController?.removeSymbol(_currentSymbol!);
       _currentSymbol = null;
     }
-    // Create SymbolOption for creating a symbol in map
+
     SymbolOptions symbolOptions = SymbolOptions(
-      geometry: initialLatLng!, // location of the symbol, required
-      iconImage: 'current-location-marker',   // icon image of the symbol
-      //optional parameter to configure the symbol
-      iconSize: .4, // size of the icon in ratio of the actual size, optional
-      iconAnchor: 'bottom', // anchor direction of the icon on the location specified,  optional
-      textField: 'My location',  // Text to show on the symbol, optional
+      geometry: initialLatLng!,
+      iconImage: 'current-location-marker',
+      iconSize: .4,
+      iconAnchor: 'bottom',
+      textField: 'My location',
       textSize: 12.5,
-      textOffset: const Offset(0, 1.2),   // shifting the text position relative to the symbol with x,y axis value, optional
-      textAnchor: 'bottom',   // anchor direction of the text on the location specified, optional
+      textOffset: const Offset(0, 1.2),
+      textAnchor: 'bottom',
       textColor: '#000000',
       textHaloBlur: 1,
       textHaloColor: '#ffffff',
@@ -178,20 +172,17 @@ class _MapScreenState extends State<MapScreen>{
       _tappedSymbol = null;
     }
 
-    // Handle the map click event here
     debugPrint('Map clicked at: ${latLng.latitude}, ${latLng.longitude}');
 
-    // Example: Show a marker at the clicked location
     SymbolOptions clickedSymbolOptions = SymbolOptions(
-      geometry: latLng, // Use clicked location for the symbol
-      iconImage: 'tapped-location-marker',   // icon image of the symbol
-      //optional parameter to configure the symbol
-      iconSize: .3, // size of the icon in ratio of the actual size, optional
-      iconAnchor: 'bottom', // anchor direction of the icon on the location specified,  optional
-      textField: 'Tapped Location',  // Text to show on the symbol, optional
+      geometry: latLng,
+      iconImage: 'tapped-location-marker',
+      iconSize: .3,
+      iconAnchor: 'bottom',
+      textField: 'Tapped Location',
       textSize: 12.5,
-      textOffset: const Offset(0, 1.2),   // shifting the text position relative to the symbol with x,y axis value, optional
-      textAnchor: 'bottom',   // anchor direction of the text on the location specified, optional
+      textOffset: const Offset(0, 1.2),
+      textAnchor: 'bottom',
       textColor: '#000000',
       textHaloBlur: 1,
       textHaloColor: '#ffffff',
