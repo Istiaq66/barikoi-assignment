@@ -1,8 +1,10 @@
+import 'package:barikoi/helper/get_di.dart' as di;
 import 'package:flutter/material.dart';
-
 import 'features/map/screens/map_screen.dart';
 
-void main() {
+
+void main(){
+  di.init();
   runApp(const MyApp());
 }
 
