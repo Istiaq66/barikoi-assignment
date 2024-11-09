@@ -24,6 +24,7 @@ class _MapScreenState extends State<MapScreen>{
   Symbol? _currentSymbol;  // To keep track of the current symbol
   Symbol? _tappedSymbol;  // To keep track of the current symbol
   LatLng? initialLatLng;
+  LatLng? tappedLatLng;
 
   @override
   void initState() {
@@ -46,49 +47,75 @@ class _MapScreenState extends State<MapScreen>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: initialPosition == null ? const Center(child: CircularProgressIndicator(),) :
-      GetBuilder<MapController>(builder: (mapController) {
-          return Stack(
-            children: [
-              MaplibreMap(
-                styleString: AppConstants.mapUrl , // barikoi map style url
-                initialCameraPosition: initialPosition!,   // set map initial location where map will show first
-                onMapCreated: (MaplibreMapController mapController){  //called when map object is created
-                  mController = mapController; // use the MaplibreMapController for map operations
+    return SafeArea(
+      child: Scaffold(
+        body: initialPosition == null ? const Center(child: CircularProgressIndicator(),) :
+        GetBuilder<MapController>(builder: (mapController) {
+            return Stack(
+              children: [
+                MaplibreMap(
+                  styleString: AppConstants.mapUrl , // barikoi map style url
+                  initialCameraPosition: initialPosition!,   // set map initial location where map will show first
+                  onMapCreated: (MaplibreMapController mapController){  //called when map object is created
+                    mController = mapController; // use the MaplibreMapController for map operations
 
-                  mController?.onSymbolTapped.add(_onSymbolTapped);   // add symbol tap event listener to mapcontroller
+                    mController?.onSymbolTapped.add(_onSymbolTapped);   // add symbol tap event listener to mapcontroller
 
-                },
-                onStyleLoadedCallback: () async {
+                  },
+                  onStyleLoadedCallback: () async {
 
-                  _showCurrentLocation();
-                },
-                onMapClick: (point, latLng) async {
-
-                  _onMapClick(point, latLng);
-                },
-              ),
-              if (mapController.reverseGeoModel != null)
-                Positioned(
-                  bottom: 10,
-                  left: 10,
-                  right: 10,
-                  child: Container(
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Text(
-                      mapController.reverseGeoModel!.place!.address!,
-                      style: const TextStyle(fontSize: 16),
+                    _showCurrentLocation();
+                  },
+                  onMapClick: (point, latLng) async {
+                    tappedLatLng = latLng;
+                    _onMapClick(point, latLng);
+                  },
+                ),
+                if (mapController.reverseGeoModel != null)
+                  Positioned(
+                    top: 10, left: 10, right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.green..withOpacity(0.5),    // Starting color of the gradient
+                            Colors.blue.withOpacity(0.5),  // Ending color of the gradient
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Row(
+                        children: [
+                          IconButton(
+                              onPressed: () async {
+                                await mapController.getRoute(myLatLng: initialLatLng,latLng: tappedLatLng);
+                                // Add the polyline to the map
+                                mController?.addLine(
+                                  LineOptions(
+                                    geometry: mapController.polylineCoordinates,
+                                    lineColor: "#ff0000",
+                                    lineWidth: 4.0,
+                                  ),
+                                );
+                                },
+                              icon: const Icon(Icons.directions,size: 50,color: Colors.white,)),
+                          Expanded(
+                            child: Text(
+                              mapController.reverseGeoModel!.place!.address!,
+                              style: const TextStyle(fontSize: 16,color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-            ],
-          );
-        }
+              ],
+            );
+          }
+        ),
       ),
     );
   }
@@ -155,7 +182,7 @@ class _MapScreenState extends State<MapScreen>{
       geometry: latLng, // Use clicked location for the symbol
       iconImage: 'tapped-location-marker',   // icon image of the symbol
       //optional parameter to configure the symbol
-      iconSize: .4, // size of the icon in ratio of the actual size, optional
+      iconSize: .3, // size of the icon in ratio of the actual size, optional
       iconAnchor: 'bottom', // anchor direction of the icon on the location specified,  optional
       textField: 'Tapped Location',  // Text to show on the symbol, optional
       textSize: 12.5,
@@ -169,8 +196,6 @@ class _MapScreenState extends State<MapScreen>{
     addImageFromAsset("tapped-location-marker",Images.marker).then((value) async {
       _tappedSymbol = await mController?.addSymbol(clickedSymbolOptions);});
     Get.find<MapController>().getAddress(latLng);
-    setState(() {
-    });
   }
 
 }

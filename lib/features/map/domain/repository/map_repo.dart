@@ -14,4 +14,9 @@ class MapRepo extends GetxService{
     return response;
   }
 
+  Future<Response> getRoute({required String? myLatitude,required String? myLongitude, required String? latitude,required String? longitude}) async {
+    Response response = await apiClient.getData('${AppConstants.routeApi}$myLongitude,$myLatitude;$longitude,$latitude?api_key=${AppConstants.apiKey}&geometries=polyline');
+    return response;
+  }
+
 }
