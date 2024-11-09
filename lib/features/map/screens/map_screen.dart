@@ -67,7 +67,7 @@ class _MapScreenState extends State<MapScreen>{
                   onMapClick: (point, latLng) async {
                     tappedLatLng = latLng;
                     if(routeLine != null){
-                      mController?.removeLine(routeLine!);
+                      await mController?.removeLine(routeLine!);
                     }
                     _onMapClick(point, latLng);
                   },
@@ -91,6 +91,10 @@ class _MapScreenState extends State<MapScreen>{
                           IconButton(
                               onPressed: () async {
                                 await mapController.getRoute(myLatLng: initialLatLng,latLng: tappedLatLng);
+
+                                if(routeLine != null){
+                                  await mController?.removeLine(routeLine!);
+                                }
                                 // Add the polyline to the map
                                 routeLine = await mController?.addLine(
                                   LineOptions(

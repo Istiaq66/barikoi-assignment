@@ -82,15 +82,14 @@ class Legs {
   double? distance;
   double? duration;
   String? summary;
-  double? weight;
 
-  Legs({this.distance, this.duration, this.summary, this.weight});
+
+  Legs({this.distance, this.duration, this.summary});
 
   Legs.fromJson(Map<String, dynamic> json) {
     distance = double.tryParse(json['distance'].toString());
     duration = double.tryParse(json['duration'].toString());
     summary = json['summary'];
-    weight = json['weight'];
   }
 
   Map<String, dynamic> toJson() {
@@ -98,7 +97,6 @@ class Legs {
     data['distance'] = distance;
     data['duration'] = duration;
     data['summary'] = summary;
-    data['weight'] = weight;
     return data;
   }
 }
