@@ -18,7 +18,7 @@ Implemented a button in the address info panel to display route directions.
 ![Demo](demo.jfif)
 
 ## State Management
-Implemented using **[Your State Management Choice (getx)]** for efficient state handling.
+Implemented using **Getx** for efficient state handling.
 
 ## Getting Started
 
