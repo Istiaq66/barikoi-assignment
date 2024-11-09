@@ -8,15 +8,17 @@ import 'api_checker.dart';
 
 class ApiClient extends GetxService {
   final String appBaseUrl;
-  static final String noInternetMessage = 'connection_to_api_server_failed'.tr;
+  static const String noInternetMessage = 'Connection to api server failed';
   final int timeoutInSeconds = 40;
 
   String? token;
   late Map<String, String> _mainHeaders;
 
-  ApiClient({required this.appBaseUrl});
+  ApiClient({required this.appBaseUrl}){
+    updateHeader();
+  }
 
-  Map<String, String> updateHeader(String? token, List<int>? zoneIDs, List<int>? operationIds, String? languageCode, int? moduleID, String? latitude, String? longitude, {bool setHeader = true}) {
+  Map<String, String> updateHeader({bool setHeader = true}) {
     Map<String, String> header = {};
     header.addAll({
       'Content-Type': 'application/json; charset=UTF-8',
@@ -41,7 +43,7 @@ class ApiClient extends GetxService {
       if (kDebugMode) {
         print('------------${e.toString()}');
       }
-      return Response(statusCode: 1, statusText: noInternetMessage);
+      return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 
@@ -58,7 +60,7 @@ class ApiClient extends GetxService {
       ).timeout(Duration(seconds: timeout ?? timeoutInSeconds));
       return handleResponse(response, uri, handleError);
     } catch (e) {
-      return Response(statusCode: 1, statusText: noInternetMessage);
+      return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
 

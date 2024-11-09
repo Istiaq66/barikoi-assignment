@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:barikoi/features/map/controllers/map_controller.dart';
 import 'package:barikoi/helper/location_helper.dart';
 import 'package:barikoi/utils/appconstants.dart';
 import 'package:barikoi/utils/image.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
 class MapScreen extends StatefulWidget{
@@ -47,27 +48,47 @@ class _MapScreenState extends State<MapScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       body: initialPosition == null ? const Center(child: CircularProgressIndicator(),) :
-      Stack(
-        children: [
-          MaplibreMap(
-            styleString: AppConstants.mapUrl , // barikoi map style url
-            initialCameraPosition: initialPosition!,   // set map initial location where map will show first
-            onMapCreated: (MaplibreMapController mapController){  //called when map object is created
-              mController = mapController; // use the MaplibreMapController for map operations
+      GetBuilder<MapController>(builder: (mapController) {
+          return Stack(
+            children: [
+              MaplibreMap(
+                styleString: AppConstants.mapUrl , // barikoi map style url
+                initialCameraPosition: initialPosition!,   // set map initial location where map will show first
+                onMapCreated: (MaplibreMapController mapController){  //called when map object is created
+                  mController = mapController; // use the MaplibreMapController for map operations
 
-              mController?.onSymbolTapped.add(_onSymbolTapped);   // add symbol tap event listener to mapcontroller
+                  mController?.onSymbolTapped.add(_onSymbolTapped);   // add symbol tap event listener to mapcontroller
 
-            },
-            onStyleLoadedCallback: () async {
+                },
+                onStyleLoadedCallback: () async {
 
-              _showCurrentLocation();
-            },
-            onMapClick: (point, latLng) async {
+                  _showCurrentLocation();
+                },
+                onMapClick: (point, latLng) async {
 
-              _onMapClick(point, latLng);
-            },
-          ),
-        ],
+                  _onMapClick(point, latLng);
+                },
+              ),
+              if (mapController.reverseGeoModel != null)
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Text(
+                      mapController.reverseGeoModel!.place!.address!,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }
       ),
     );
   }
@@ -147,6 +168,7 @@ class _MapScreenState extends State<MapScreen>{
     );
     addImageFromAsset("tapped-location-marker",Images.marker).then((value) async {
       _tappedSymbol = await mController?.addSymbol(clickedSymbolOptions);});
+    Get.find<MapController>().getAddress(latLng);
     setState(() {
     });
   }
