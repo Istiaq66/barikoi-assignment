@@ -9,6 +9,11 @@ class LocationHelper{
 
   static final LocationHelper _instance = LocationHelper._internal();
   StreamSubscription<Position>? _positionSubscription;
+  StreamSubscription<Position>? get positionSubscription => _positionSubscription;
+  final StreamController<Position> _positionStreamController = StreamController<Position>.broadcast();
+
+  // Getter for the stream.
+  Stream<Position> get positionStream => _positionStreamController.stream;
 
   LocationHelper._internal();
 
@@ -33,13 +38,13 @@ class LocationHelper{
 
   }
 
-
   void getCurrentLocation(){
     _positionSubscription = Geolocator.getPositionStream(locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 100,
     )).listen((Position? position){
       debugPrint("================CurrentPosition================> $position");
+      _positionStreamController.add(position!);
     });
   }
 
